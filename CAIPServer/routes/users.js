@@ -2,7 +2,7 @@ var express = require('express');
 var router  = express.Router();
 var mysql   = require('mysql');
 var md5     = require('md5');
-var config  = require('config.json');
+var config  = require('../config.json');
 
 var connection = mysql.createConnection({
     host     : config.host,
@@ -77,16 +77,19 @@ router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
 
 });
 
+/* POST update user details */
 router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
     var id = req.path.split('/')[1];
     var updates = [];
     var query = 'UPDATE users SET ';
     for (var key in req.body) {
-        query += key + " = ?, ";
-        updates.push(req.body[key]);
+        if (key !== 'username' && key !== 'idusers') {
+            query += key + " = ?, ";
+            updates.push(req.body[key]);
+        }
     }
     query = query.slice(0, -2);
-    query += " WHERE id = ?";
+    query += " WHERE idusers = ?";
     updates.push(id);
 
     console.log(query);
