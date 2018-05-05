@@ -23,13 +23,14 @@ DROP TABLE IF EXISTS `pictures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pictures` (
-  `idpictures` int(11) NOT NULL,
-  `picture` longblob NOT NULL,
+  `idpictures` int(11) NOT NULL AUTO_INCREMENT,
+  `picture` varchar(1024) NOT NULL,
   `idproperties` int(11) NOT NULL,
   PRIMARY KEY (`idpictures`),
+  UNIQUE KEY `idpictures_UNIQUE` (`idpictures`),
   KEY `idproperties_idx` (`idproperties`),
   CONSTRAINT `idproperties` FOREIGN KEY (`idproperties`) REFERENCES `properties` (`idproperties`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +39,7 @@ CREATE TABLE `pictures` (
 
 LOCK TABLES `pictures` WRITE;
 /*!40000 ALTER TABLE `pictures` DISABLE KEYS */;
+INSERT INTO `pictures` VALUES (3,'erty',2),(4,'1234',2),(5,'wer',3),(6,'yhjk',3),(7,'asdf',2);
 /*!40000 ALTER TABLE `pictures` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-05 17:27:31
+-- Dump completed on 2018-05-05 21:16:16

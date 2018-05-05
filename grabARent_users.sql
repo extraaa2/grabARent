@@ -43,7 +43,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0077c938f7e01fd91be342d3e3a5a632','Eva','Smith','evasmith','somecryptedpass',1,'0101','Constanta','+40712345698'),('cd4388c0c62e65ac8b99e3ec49fd9409','John','Smith','johnsmith','somecryptedpass',1,'0101','Bucharest','+40712345678');
+INSERT INTO `users` VALUES ('0077c938f7e01fd91be342d3e3a5a632','Eva','Smith','evasmith','somecryptedpass',1,'0101','Constanta','+40712345698'),('43c3b011d8fc6192c0473b4ef3d89051','Ion','Smith','ionsmith','somecryptedpass',1,'0101','Iasi','+40712345698'),('cd4388c0c62e65ac8b99e3ec49fd9409','IonIon','Smith','johnsmith','somecryptedpass',1,'0101','Bucharest','+40712345678');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-05 17:27:31
+-- Dump completed on 2018-05-05 21:16:17

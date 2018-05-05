@@ -23,21 +23,23 @@ DROP TABLE IF EXISTS `properties`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `properties` (
-  `idproperties` int(11) NOT NULL,
+  `idproperties` int(11) NOT NULL AUTO_INCREMENT,
   `neighbourhood` varchar(45) NOT NULL,
-  `lat` decimal(5,0) NOT NULL,
-  `long` decimal(5,0) NOT NULL,
+  `gps_lat` decimal(10,5) NOT NULL,
+  `gps_long` decimal(10,5) NOT NULL,
   `floor` int(11) NOT NULL,
   `maxfloor` int(11) NOT NULL,
   `price` int(11) NOT NULL,
   `rooms` int(11) NOT NULL,
-  `confort` varchar(45) NOT NULL,
-  `address` varchar(45) NOT NULL,
+  `comfort` varchar(45) NOT NULL,
+  `address` varchar(100) NOT NULL,
   `idusers` varchar(45) NOT NULL,
+  `city` varchar(45) NOT NULL,
   PRIMARY KEY (`idproperties`),
+  UNIQUE KEY `idproperties_UNIQUE` (`idproperties`),
   KEY `idusers_idx` (`idusers`),
   CONSTRAINT `idusers` FOREIGN KEY (`idusers`) REFERENCES `users` (`idusers`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,6 +48,7 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
+INSERT INTO `properties` VALUES (1,'Politehnica',80.34500,80.12300,3,10,350,2,'Decomandat','[object Object]','cd4388c0c62e65ac8b99e3ec49fd9409','Bucuresti'),(2,'Politehnica',80.34500,80.12300,3,10,400,2,'Decomandat','{\"street\":\"Iuliu Maniu\",\"number\":10,\"building\":\"K4\"}','cd4388c0c62e65ac8b99e3ec49fd9409','Bucuresti'),(3,'Lujerului',80.33400,80.44500,2,7,330,2,'Semicomandat','{\"street\":\"Iuliu Maniu\",\"number\":5,\"building\":\"M12\"}','cd4388c0c62e65ac8b99e3ec49fd9409','Bucuresti');
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-05 17:27:31
+-- Dump completed on 2018-05-05 21:16:17
