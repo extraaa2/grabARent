@@ -1,18 +1,19 @@
 var express = require('express');
-var router = express.Router();
+var router  = express.Router();
 var mysql   = require('mysql');
 var md5     = require('md5');
+var config  = require('config.json');
 
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'ella',
-    password : 'Buttered2@',
-    database : 'grabARent'
+    host     : config.host,
+    user     : config.user,
+    password : config.password,
+    database : config.database
 });
 
 connection.connect();
 
-/* GET users listing. */
+/* POST new user. */
 router.post('/', function(req, res, next) {
     var query = {
             idusers: md5(req.body.username),
@@ -39,26 +40,69 @@ router.post('/', function(req, res, next) {
     });
 
 });
-router.get('/([0-9]+)', function (req, res, next) {
-    var id = req.path().split('/');
-    var query = "SELECT * from users WHERE idusers=" + id;
+
+/* GET user details */
+router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
+    var id = req.path.split('/')[1];
+    var query = 'SELECT * from `users` WHERE `idusers` = "' + id + '"';
     connection.query(query, function (error, results, fields) {
         if (error){
+            console.log(error);
             res.send({
                 error: "User not found."
             });
             return;
         }
-        console.log(results);
-        console.log(fields);
+        var response = {
+            id: results[0].idusers,
+            firstName: results[0].firstName,
+            lastName: results[0].lastName,
+            rank: results[0].rank,
+            profilePicture: results[0].picture,
+            telephone: results[0].telephone
+        };
+        var query = 'SELECT COUNT(*) AS count FROM properties WHERE idusers = "' + id + '"';
+        connection.query(query, function (error, results, fields) {
+            if (error){
+                console.log(error);
+                res.send({
+                    error: "User not found."
+                });
+                return;
+            }
+            response.announces =  results[0].count
+            res.send(response);
+        });
+    });
+
+});
+
+router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
+    var id = req.path.split('/')[1];
+    var updates = [];
+    var query = 'UPDATE users SET ';
+    for (var key in req.body) {
+        query += key + " = ?, ";
+        updates.push(req.body[key]);
+    }
+    query = query.slice(0, -2);
+    query += " WHERE id = ?";
+    updates.push(id);
+
+    console.log(query);
+    console.log(updates);
+
+    connection.query(query, updates, function(error, results, fields) {
+        if(error) {
+            console.log(error);
+            res.send({
+                error: "A problem occurred."
+            });
+            return;
+        }
+
         res.send({
-            id: "",
-            firstName: "John",
-            lastName: "Smith",
-            rank: 1,
-            announces : 5,
-            profilePicture: "0101",
-            telephone: "+40712345678"
+            message: "User updated."
         });
     });
 
