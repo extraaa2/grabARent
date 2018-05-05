@@ -92,9 +92,6 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
     query += " WHERE idusers = ?";
     updates.push(id);
 
-    console.log(query);
-    console.log(updates);
-
     connection.query(query, updates, function(error, results, fields) {
         if(error) {
             console.log(error);
@@ -106,6 +103,25 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
 
         res.send({
             message: "User updated."
+        });
+    });
+
+});
+
+router.delete('/([a-zA-Z0-9]+)', function(req, res, next) {
+    var id = req.path.split('/')[1];
+
+    connection.query('DELETE FROM posts WHERE idusers = "' + id + '"', function(error, results, fields) {
+        if(error) {
+            console.log(error);
+            res.send({
+                error: "A problem occurred."
+            });
+            return;
+        }
+
+        res.send({
+            message: "User removed."
         });
     });
 
