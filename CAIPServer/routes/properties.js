@@ -1,7 +1,6 @@
 var express = require('express');
 var router  = express.Router();
 var mysql   = require('mysql');
-var md5     = require('md5');
 var config  = require('../config.json');
 var async   = require('async');
 
@@ -26,7 +25,8 @@ router.post('/', function(req, res, next) {
         rooms: req.body.rooms,
         comfort: req.body.comfort.toString(),
         address: JSON.stringify(req.body.address),
-        price: req.body.price
+        price: req.body.price,
+        city: req.body.city
     };
     connection.query("INSERT INTO properties SET ?", query, function(error, results, fields) {
         if(error) {
@@ -68,33 +68,41 @@ router.post('/', function(req, res, next) {
 /* GET property details */
 router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
     var id = req.path.split('/')[1];
-    var query = 'SELECT * from `users` WHERE `idusers` = "' + id + '"';
+    var query = 'SELECT * from `properties` WHERE `idproperties` = "' + id + '"';
     connection.query(query, function (error, results, fields) {
         if (error){
             console.log(error);
             res.send({
-                error: "User not found."
+                error: "Property not found."
             });
             return;
         }
         var response = {
-            id: results[0].idusers,
-            firstName: results[0].firstName,
-            lastName: results[0].lastName,
-            rank: results[0].rank,
-            profilePicture: results[0].picture,
-            telephone: results[0].telephone
+            idusers: results[0].idusers,
+            neighbourhood: results[0].neighbourhood,
+            gps_lat: results[0].gps_lat,
+            gps_long: results[0].gps_long,
+            floor: results[0].floor,
+            price: results[0].price,
+            rooms: results[0].rooms,
+            comfort: results[0].comfort,
+            address: JSON.parse(results[0].address),
+            maxfloor: results[0].maxfloor,
+            city: results[0].city,
+            pictures: []
         };
-        var query = 'SELECT COUNT(*) AS count FROM properties WHERE idusers = "' + id + '"';
+        var query = 'SELECT * FROM pictures WHERE idproperties = "' + id + '"';
         connection.query(query, function (error, results, fields) {
             if (error){
                 console.log(error);
                 res.send({
-                    error: "User not found."
+                    error: "Property not found."
                 });
                 return;
             }
-            response.announces =  results[0].count
+            for (var i in results) {
+                response.pictures.push(results[i].picture);
+            }
             res.send(response);
         });
     });
@@ -105,19 +113,16 @@ router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
 router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
     var id = req.path.split('/')[1];
     var updates = [];
-    var query = 'UPDATE users SET ';
+    var query = 'UPDATE properties SET ';
     for (var key in req.body) {
-        if (key !== 'username' && key !== 'idusers') {
+        if (key !== 'pictures' && key !== 'idproperties') {
             query += key + " = ?, ";
             updates.push(req.body[key]);
         }
     }
     query = query.slice(0, -2);
-    query += " WHERE idusers = ?";
+    query += " WHERE idproperties = ?";
     updates.push(id);
-
-    console.log(query);
-    console.log(updates);
 
     connection.query(query, updates, function(error, results, fields) {
         if(error) {
@@ -127,12 +132,49 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
             });
             return;
         }
-
-        res.send({
-            message: "User updated."
-        });
+        if (req.body.pictures) {
+            async.each(req.body.pictures, function (picture, cb) {
+                var query = {
+                    idproperties: id,
+                    picture: picture
+                };
+                connection.query("INSERT INTO pictures SET ?", query, function(error, results, fields) {
+                    if (error) {
+                        cb(error);
+                        return;
+                    }
+                    cb();
+                });
+            }, function (error) {
+                if (error) {
+                    console.log(error);
+                    res.send({
+                        error: "A problem occured."
+                    });
+                    return;
+                }
+                res.send({
+                    message: "Property updated."
+                });
+            });
+        }
     });
 
+});
+
+/* POST get filtered properties */
+
+router.get('/filter', function (req, res, next) {
+    var updates = [];
+    var query = 'SELECT * FROM properties WHERE ';
+    for (var key in req.body) {
+        query += key + " = ?, ";
+        updates.push(req.body[key]);
+    }
+    query = query.slice(0, -2);
+    connection.query(query, updates, function(error, results, fields) {
+        console.log(results);
+    });
 });
 
 module.exports = router;
