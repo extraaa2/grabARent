@@ -67,8 +67,8 @@ router.post('/', function(req, res, next) {
 
 /* GET property details */
 router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
-    var id = req.path.split('/')[1];
-    var query = 'SELECT * from `properties` WHERE `idproperties` = "' + id + '"';
+    var idproperties = req.path.split('/')[1];
+    var query = 'SELECT * from `properties` WHERE `idproperties` = "' + idproperties + '"';
     connection.query(query, function (error, results, fields) {
         if (error){
             console.log(error);
@@ -91,7 +91,7 @@ router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
             city: results[0].city,
             pictures: []
         };
-        var query = 'SELECT * FROM pictures WHERE idproperties = "' + id + '"';
+        var query = 'SELECT * FROM pictures WHERE idproperties = "' + idproperties + '"';
         connection.query(query, function (error, results, fields) {
             if (error){
                 console.log(error);
@@ -111,7 +111,7 @@ router.get('/([a-zA-Z0-9]+)', function (req, res, next) {
 
 /* POST update property details */
 router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
-    var id = req.path.split('/')[1];
+    var idproperties = req.path.split('/')[1];
     var updates = [];
     var query = 'UPDATE properties SET ';
     for (var key in req.body) {
@@ -122,7 +122,7 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
     }
     query = query.slice(0, -2);
     query += " WHERE idproperties = ?";
-    updates.push(id);
+    updates.push(idproperties);
 
     connection.query(query, updates, function(error, results, fields) {
         if(error) {
@@ -135,7 +135,7 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
         if (req.body.pictures) {
             async.each(req.body.pictures, function (picture, cb) {
                 var query = {
-                    idproperties: id,
+                    idproperties: idproperties,
                     picture: picture
                 };
                 connection.query("INSERT INTO pictures SET ?", query, function(error, results, fields) {
