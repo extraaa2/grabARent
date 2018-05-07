@@ -44,7 +44,8 @@ router.post('/', function(req, res, next) {
 
 /* GET all users details */
 router.get('/', function (req, res, next) {
-    var query = 'SELECT * from `users` ';
+    var query = 'SELECT * from users';
+    console.log("AICI");
     connection.query(query, function (error, results, fields) {
         if (error){
             console.log(error);
@@ -54,7 +55,7 @@ router.get('/', function (req, res, next) {
             return;
         }
         var response = [];
-        async.each(response, function (user, callback) {
+        async.each(results, function (user, callback) {
             var send = {
                 idusers: user.idusers,
                 firstName: user.firstName,
@@ -82,7 +83,7 @@ router.get('/', function (req, res, next) {
                 console.log(error);
             }
             res.send(response);
-        })
+        }) ;
     });
 
 });
