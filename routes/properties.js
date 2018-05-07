@@ -162,18 +162,18 @@ router.post('/([a-zA-Z0-9]+)', function(req, res, next) {
 
 });
 
-/* POST get filtered properties */
-
-router.get('/filter', function (req, res, next) {
+/* GET all properties */
+router.get('/', function (req, res, next) {
     var updates = [];
-    var query = 'SELECT * FROM properties WHERE ';
-    for (var key in req.body) {
-        query += key + " = ?, ";
-        updates.push(req.body[key]);
-    }
-    query = query.slice(0, -2);
+    var query = 'SELECT * FROM properties ';
+    // for (var key in req.body) {
+    //     query += key + " = ?, ";
+    //     updates.push(req.body[key]);
+    // }
+    // query = query.slice(0, -2);
     connection.query(query, updates, function(error, results, fields) {
         console.log(results);
+        res.send(results);
     });
 });
 
